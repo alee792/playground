@@ -70,5 +70,5 @@ func (s *memcachedStore) PutSnippet(ctx context.Context, id string, snip *snippe
 }
 
 func (s *memcachedStore) GetSnippet(ctx context.Context, id string, snip *snippet) error {
-	return s.client.Get(id, &snip)
+	return s.client.Get(id, snip)
 }
