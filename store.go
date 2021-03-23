@@ -59,3 +59,16 @@ func (s *inMemStore) GetSnippet(_ context.Context, id string, snip *snippet) err
 	*snip = *v
 	return nil
 }
+
+// memcachedStore just stores the entire gob encoded snippet.
+type memcachedStore struct {
+	client *gobCache
+}
+
+func (s *memcachedStore) PutSnippet(ctx context.Context, id string, snip *snippet) error {
+	return s.client.Set(id, snip)
+}
+
+func (s *memcachedStore) GetSnippet(ctx context.Context, id string, snip *snippet) error {
+	return s.client.Get(id, &snip)
+}
