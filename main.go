@@ -27,7 +27,6 @@ func main() {
 	flag.Parse()
 	s, err := newServer(func(s *server) error {
 		pid := projectID()
-		caddr := os.Getenv("MEMCACHED_ADDR")
 		if pid != "" {
 			c, err := datastore.NewClient(context.Background(), pid)
 			if err != nil {
@@ -36,6 +35,7 @@ func main() {
 			s.db = cloudDatastore{client: c}
 		}
 		
+		caddr := os.Getenv("MEMCACHED_ADDR")
 		if caddr != "" {
 			c := newGobCache(caddr)
 			s.cache = c
