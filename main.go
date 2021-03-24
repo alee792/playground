@@ -27,19 +27,25 @@ func main() {
 	flag.Parse()
 	s, err := newServer(func(s *server) error {
 		pid := projectID()
-		caddr := os.Getenv("MEMCACHED_ADDR")
-		switch {
-		case pid != "":
+		if pid != "" {
 			c, err := datastore.NewClient(context.Background(), pid)
 			if err != nil {
 				return fmt.Errorf("could not create cloud datastore client: %v", err)
 			}
 			s.db = cloudDatastore{client: c}
-		case caddr != "":
+		}
+		
+		caddr := os.Getenv("MEMCACHED_ADDR")
+		if caddr != "" {
 			c := newGobCache(caddr)
 			s.cache = c
-			s.db = &memcachedStore{c}
-		default:
+			if s.db == nil {
+				s.db = &memcachedStore{c}
+			}
+			log.Printf("App (project ID: %q) is caching results", pid)
+		}
+		
+		if s.db == nil {
 			s.db = &inMemStore{}
 		}
 
