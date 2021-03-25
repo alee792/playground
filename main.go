@@ -35,8 +35,7 @@ func main() {
 			s.db = cloudDatastore{client: c}
 		}
 		
-		caddr := os.Getenv("MEMCACHED_ADDR")
-		if caddr != "" {
+		if caddr := os.Getenv("MEMCACHED_ADDR"); caddr != "" {
 			c := newGobCache(caddr)
 			s.cache = c
 			if s.db == nil {
